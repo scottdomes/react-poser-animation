@@ -2,43 +2,59 @@ import React, { Component } from 'react';
 import posed, { tween } from 'react-pose';
 import './App.css';
 
+const initial = { height: 'auto', width: '500px', flip: true };
+
 const Image = posed.img({
-  normal: { width: '500px', x: '0%' },
+  normal: initial,
   large: {
-    width: '1000px',
-    x: '-25%'
+    height: '100vh',
+    width: 'auto',
+    y: 0,
+    flip: true,
   },
-  closing: {
-    width: '500px',
-    x: '0%',
+  closing: initial,
+});
+
+const ModalContainer = posed.div({
+  mount: {
+    y: ({ y }) => y,
+  },
+  mounted: {
+    y: 20,
   },
 });
 
 class Modal extends Component {
-  state = { pose: 'large' };
+  state = { imagePose: 'large', modalPose: 'mounted' };
 
   beginClose = () => {
-    this.setState({ pose: 'closing' });
+    this.setState({ imagePose: 'closing', modalPose: 'mount' });
   };
 
   handlePoseComplete = () => {
-    if (this.state.pose === 'closing') {
+    if (this.state.imagePose === 'closing') {
       this.props.close();
     }
   };
 
   render() {
     return (
-      <div onClick={this.beginClose} className="Modal" style={this.props.modalEmanationPoint}>
+      <ModalContainer
+        onClick={this.beginClose}
+        className="Modal"
+        initialPose="mount"
+        pose={this.state.modalPose}
+        y={this.props.modalEmanationPoint.top}
+      >
         <Image
           onPoseComplete={this.handlePoseComplete}
-          pose={this.state.pose}
+          pose={this.state.imagePose}
           initialPose="normal"
           src={this.props.src}
-          className="App-logo"
+          className="ImageContainer-image"
           alt="logo"
         />
-      </div>
+      </ModalContainer>
     );
   }
 }
@@ -47,8 +63,11 @@ class ImageContainer extends Component {
   state = { showModal: false };
 
   handleToggleModal = e => {
-    const { left, top } = this.image.getBoundingClientRect()
-    this.setState(prev => ({ showModal: !prev.showModal, modalEmanationPoint: { left, top } }));
+    const { top } = this.image.getBoundingClientRect();
+    this.setState(prev => ({
+      showModal: !prev.showModal,
+      modalEmanationPoint: { top },
+    }));
   };
 
   render() {
@@ -61,9 +80,14 @@ class ImageContainer extends Component {
           ref={elem => (this.image = elem)}
           className="ImageContainer-image"
           alt="logo"
+          style={this.state.showModal ? { opacity: 0 } : {}}
         />
         {this.state.showModal && (
-          <Modal close={this.handleToggleModal} src={src} modalEmanationPoint={this.state.modalEmanationPoint} />
+          <Modal
+            close={this.handleToggleModal}
+            src={src}
+            modalEmanationPoint={this.state.modalEmanationPoint}
+          />
         )}
       </div>
     );

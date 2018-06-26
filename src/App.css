@@ -16,7 +16,7 @@
 }
 
 .ImageContainer {
-  position: relative;
+  /*position: relative;*/
   display: inline-block;
 }
 
@@ -28,6 +28,7 @@
   position: fixed;
   top: 0;
   left: 0;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
