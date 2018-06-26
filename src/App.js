@@ -1,16 +1,26 @@
 import React, { Component } from 'react';
-import posed, { tween } from 'react-pose';
+import posed from 'react-pose';
+
 import './App.css';
 
-const initial = { height: 'auto', width: '500px', flip: true };
+const transition = {
+  ease: 'easeInOut'
+};
+
+const initial = {
+  height: 'auto',
+  width: '500px',
+  flip: true,
+  transition
+};
 
 const Image = posed.img({
   normal: initial,
   large: {
-    height: '100vh',
+    height: '95vh',
     width: 'auto',
-    y: 0,
     flip: true,
+    transition
   },
   closing: initial,
 });
@@ -18,9 +28,11 @@ const Image = posed.img({
 const ModalContainer = posed.div({
   mount: {
     y: ({ y }) => y,
+    transition
   },
   mounted: {
-    y: 20,
+    y: '10vh',
+    transition
   },
 });
 
