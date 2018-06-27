@@ -3,14 +3,14 @@ import posed from 'react-pose';
 import './App.css';
 
 const transition = {
-  ease: 'easeInOut'
+  ease: 'easeInOut',
 };
 
 const initial = {
   height: 'auto',
   width: '500px',
   flip: true,
-  transition
+  transition,
 };
 
 const Image = posed.img({
@@ -19,19 +19,19 @@ const Image = posed.img({
     height: '95vh',
     width: 'auto',
     flip: true,
-    transition
+    transition,
   },
   closing: initial,
 });
 
 const Sidebar = posed.div({
   initial: {
-    width: 0
+    width: 0,
   },
   expanded: {
-    width: 300
-  }
-})
+    width: 300,
+  },
+});
 
 const ModalContainer = posed.div({
   mount: {
@@ -45,7 +45,12 @@ const ModalContainer = posed.div({
 });
 
 class Modal extends Component {
-  state = { imagePose: 'large', modalPose: 'mounted', sidebarPose: 'expanded', showSidebar: false };
+  state = {
+    imagePose: 'large',
+    modalPose: 'mounted',
+    sidebarPose: 'expanded',
+    showSidebar: false,
+  };
 
   beginClose = () => {
     this.setState({ sidebarPose: 'initial' });
@@ -53,21 +58,21 @@ class Modal extends Component {
 
   continueClose = () => {
     this.setState({ imagePose: 'closing', modalPose: 'mount' });
-  }
+  };
 
   handleSidebarPoseComplete = () => {
     if (this.state.sidebarPose === 'initial') {
-      this.continueClose()
+      this.setState({ showSidebar: false });
+      this.continueClose();
     }
-  }
+  };
 
   handlePoseComplete = () => {
     if (this.state.imagePose === 'closing') {
-      this.setState({ showSidebar: false })
       this.props.close();
     }
     if (this.state.modalPose === 'mounted') {
-      this.setState({ showSidebar: true })
+      this.setState({ showSidebar: true });
     }
   };
 
@@ -88,9 +93,14 @@ class Modal extends Component {
           className="ImageContainer-image"
           alt="logo"
         />
-        {
-          this.state.showSidebar && <Sidebar onPoseComplete={this.handleSidebarPoseComplete} initialPose="initial" pose={this.state.sidebarPose} className="Modal-sidebar" />
-        }
+        {this.state.showSidebar && (
+          <Sidebar
+            onPoseComplete={this.handleSidebarPoseComplete}
+            initialPose="initial"
+            pose={this.state.sidebarPose}
+            className="Modal-sidebar"
+          />
+        )}
       </ModalContainer>
     );
   }
@@ -100,7 +110,9 @@ class ImageContainer extends Component {
   state = { showModal: false };
 
   handleToggleModal = e => {
+    console.log(this.image.getBoundingClientRect())
     const { top } = this.image.getBoundingClientRect();
+    console.log(top)
     this.setState(prev => ({
       showModal: !prev.showModal,
       modalEmanationPoint: { top },
