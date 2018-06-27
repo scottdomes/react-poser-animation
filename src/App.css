@@ -34,6 +34,11 @@
   align-items: center;
 }
 
+.Modal-sidebar {
+  height: 95vh;
+  background-color: #e6e6e6;
+}
+
 .App-title {
   font-size: 1.5em;
 }

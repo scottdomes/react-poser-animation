@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import posed from 'react-pose';
-
 import './App.css';
 
 const transition = {
@@ -25,27 +24,50 @@ const Image = posed.img({
   closing: initial,
 });
 
+const Sidebar = posed.div({
+  initial: {
+    width: 0
+  },
+  expanded: {
+    width: 300
+  }
+})
+
 const ModalContainer = posed.div({
   mount: {
     y: ({ y }) => y,
-    transition
+    transition,
   },
   mounted: {
     y: '10vh',
-    transition
+    transition,
   },
 });
 
 class Modal extends Component {
-  state = { imagePose: 'large', modalPose: 'mounted' };
+  state = { imagePose: 'large', modalPose: 'mounted', sidebarPose: 'expanded', showSidebar: false };
 
   beginClose = () => {
-    this.setState({ imagePose: 'closing', modalPose: 'mount' });
+    this.setState({ sidebarPose: 'initial' });
   };
+
+  continueClose = () => {
+    this.setState({ imagePose: 'closing', modalPose: 'mount' });
+  }
+
+  handleSidebarPoseComplete = () => {
+    if (this.state.sidebarPose === 'initial') {
+      this.continueClose()
+    }
+  }
 
   handlePoseComplete = () => {
     if (this.state.imagePose === 'closing') {
+      this.setState({ showSidebar: false })
       this.props.close();
+    }
+    if (this.state.modalPose === 'mounted') {
+      this.setState({ showSidebar: true })
     }
   };
 
@@ -66,6 +88,9 @@ class Modal extends Component {
           className="ImageContainer-image"
           alt="logo"
         />
+        {
+          this.state.showSidebar && <Sidebar onPoseComplete={this.handleSidebarPoseComplete} initialPose="initial" pose={this.state.sidebarPose} className="Modal-sidebar" />
+        }
       </ModalContainer>
     );
   }
